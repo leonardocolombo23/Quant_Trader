@@ -131,24 +131,25 @@ def final_plot(results, frontier_returns, frontier_volatilities, max_sharpe_retu
     plt.show()
 
 # FINAL RESULT
-tickers = {
-    'MSCI World': 'IWDA.L',
-    'Emerging Markets IMI': 'EIMI.L',
-    'MSCI Small Cap': 'WSML.L',
-    'Bond Corporate Hedged': 'CRHG.L',
-    'Physical Gold': 'EGLN.L'
-}
-prices = download_data(tickers, start='2020-07-01', end='2025-12-31')
-monthly_returns = compute_monthly_returns(prices)
-mean_returns = monthly_returns.mean()
-cov_matrix = monthly_returns.cov()
+if __name__ == "__main__":
+    tickers = {
+        'MSCI World': 'IWDA.L',
+        'Emerging Markets IMI': 'EIMI.L',
+        'MSCI Small Cap': 'WSML.L',
+        'Bond Corporate Hedged': 'CRHG.L',
+        'Physical Gold': 'EGLN.L'
+    }
+    prices = download_data(tickers, start='2020-07-01', end='2025-12-31')
+    monthly_returns = compute_monthly_returns(prices)
+    mean_returns = monthly_returns.mean()
+    cov_matrix = monthly_returns.cov()
 
-results_montecarlo, weights_montecarlo = monte_carlo_simulation(mean_returns, cov_matrix, 10000, 0.02)
+    results_montecarlo, weights_montecarlo = monte_carlo_simulation(mean_returns, cov_matrix, 10000, 0.02)
 
-bounds = build_bounds(mean_returns.index, excluded_asset=None, default_bound=(0, 1.0))
+    bounds = build_bounds(mean_returns.index, excluded_asset=None, default_bound=(0, 1.0))
 
-max_sharpe_weights, max_sharpe_return, max_sharpe_std = optimize_max_sharpe(mean_returns, cov_matrix, bounds, 0.02)
-min_var_weights, min_var_return, min_var_std = optimize_min_variance(mean_returns, cov_matrix, bounds)
+    max_sharpe_weights, max_sharpe_return, max_sharpe_std = optimize_max_sharpe(mean_returns, cov_matrix, bounds, 0.02)
+    min_var_weights, min_var_return, min_var_std = optimize_min_variance(mean_returns, cov_matrix, bounds)
 
-eff_front_returns, eff_front_volatilities = compute_efficient_frontier(mean_returns, cov_matrix, bounds, min_var_return, max_sharpe_return, 100)
-final_plot(results_montecarlo, eff_front_returns, eff_front_volatilities, max_sharpe_return, max_sharpe_std, min_var_return, min_var_std)
+    eff_front_returns, eff_front_volatilities = compute_efficient_frontier(mean_returns, cov_matrix, bounds, min_var_return, max_sharpe_return, 100)
+    final_plot(results_montecarlo, eff_front_returns, eff_front_volatilities, max_sharpe_return, max_sharpe_std, min_var_return, min_var_std)
